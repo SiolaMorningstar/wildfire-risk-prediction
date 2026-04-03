@@ -2,7 +2,7 @@
 
 An end-to-end machine learning pipeline that predicts wildfire risk across California using **NASA FIRMS satellite fire detections** and **Google AlphaEarth geospatial embeddings** — deployed as an interactive Streamlit web application.
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://wildfire-risk-prediction.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://wildfire-risk-prediction-ej8zpckplpivro7duxx993.streamlit.app/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -10,7 +10,7 @@ An end-to-end machine learning pipeline that predicts wildfire risk across Calif
 
 ## 🌐 Live Demo
 
-> **[Open the app on Streamlit Community Cloud →](https://wildfire-risk-prediction.streamlit.app)**
+> **[Open the app on Streamlit Community Cloud →](https://wildfire-risk-prediction-ej8zpckplpivro7duxx993.streamlit.app/)**
 
 The app displays an interactive risk heatmap of California, model performance metrics, SHAP feature importance charts, and a tier-based risk classification system (Low / Moderate / High / Critical).
 

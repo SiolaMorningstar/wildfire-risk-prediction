@@ -53,11 +53,6 @@ tier_counts = risk_df['risk_tier'].value_counts()
 # SIDEBAR
 # ════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.image(
-        "https://github.com/SiolaMorningstar/wildfire-risk-prediction"
-        , "/blob/main/Flames%20and%20hills%20emblem%20logo.png"
-        width=80
-    )
     st.title("🔥 Wildfire Risk")
     st.caption("AlphaEarth + XGBoost · California 2023")
     st.divider()

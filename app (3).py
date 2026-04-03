@@ -53,10 +53,15 @@ tier_counts = risk_df['risk_tier'].value_counts()
 # SIDEBAR
 # ════════════════════════════════════════════════════════════
 with st.sidebar:
+    st.image(
+        "https://upload.wikimedia.org/wikipedia/commons/"
+        "thumb/e/e3/NASA_logo.svg/320px-NASA_logo.svg.png",
+        width=80
+    )
     st.title("🔥 Wildfire Risk")
     st.caption("AlphaEarth + XGBoost · California 2023")
     st.divider()
-
+ 
     page = st.radio(
         "Navigate",
         ["🏠 Overview",
@@ -66,7 +71,7 @@ with st.sidebar:
          "🎯 Risk Predictor"],
         label_visibility = "collapsed"
     )
-
+ 
     st.divider()
     st.markdown("**Best Model**")
     st.metric("ROC-AUC",  config['best_auc'])

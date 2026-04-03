@@ -148,56 +148,6 @@ wildfire-risk-prediction/
     └── scaler.pkl                ← Fitted StandardScaler (must match training data)
 ```
 
----
-
-## 💻 Running Locally
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/SiolaMorningstar/wildfire-risk-prediction.git
-cd wildfire-risk-prediction
-```
-
-### 2. Create a virtual environment
-
-```bash
-python -m venv venv
-source venv/bin/activate        # macOS / Linux
-venv\Scripts\activate           # Windows
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Run the app
-
-```bash
-streamlit run app.py
-```
-
-The app will open at `http://localhost:8501` in your browser.
-
-> **Note:** The app loads pre-computed predictions from `data/risk_predictions.csv` — no Earth Engine authentication is required to run the Streamlit app.
-
----
-
-## ☁️ Deploying to Streamlit Community Cloud
-
-1. Push your repository to GitHub (all files including `data/` and `models/`).
-2. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
-3. Click **New app** → select your repository → set **Main file path** to `app.py`.
-4. Click **Deploy** — Streamlit will install `requirements.txt` automatically.
-
-**Important:** Make sure `models/xgboost_tuned.pkl` and `models/scaler.pkl` are committed to the repository. These binary files are required for the app to load.
-
-If your model files are large (>100 MB), consider using [Git LFS](https://git-lfs.github.com/) or hosting them on a cloud bucket and loading via URL in `app.py`.
-
----
-
 ## 📡 Data Sources
 
 ### FIRMS — Fire Information for Resource Management System

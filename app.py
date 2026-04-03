@@ -53,12 +53,14 @@ tier_counts = risk_df['risk_tier'].value_counts()
 # SIDEBAR
 # ════════════════════════════════════════════════════════════
 with st.sidebar:
-    st.image(
-        "https://upload.wikimedia.org/wikipedia/commons/"
-        "thumb/e/e3/NASA_logo.svg/320px-NASA_logo.svg.png",
-        width=80
+    st.markdown(
+        "<div style='text-align:center; padding: 0.5rem 0;'>"
+        "<span style='font-size:3rem'>🔥</span><br>"
+        "<span style='font-size:1.3rem; font-weight:700;"
+        "color:#c0392b;'>Wildfire Risk</span>"
+        "</div>",
+        unsafe_allow_html=True
     )
-    st.title("🔥 Wildfire Risk")
     st.caption("AlphaEarth + XGBoost · California 2023")
     st.divider()
 
@@ -499,23 +501,15 @@ elif page == "🎯 Risk Predictor":
         "pre-computed predictions."
     )
 
-    col_lat, col_lon = st.columns(2)
-    with col_lat:
-        user_lat = st.number_input(
-            "Latitude",
-            min_value=32.5, max_value=42.0,
-            value=37.77, step=0.01,
-            format="%.4f"
-        )
-    with col_lon:
-        user_lon = st.number_input(
-            "Longitude",
-            min_value=-124.5, max_value=-114.0,
-            value=-122.42, step=0.01,
-            format="%.4f"
-        )
+    # ── Session state so values + results persist across reruns ──
+    if 'pred_lat' not in st.session_state:
+        st.session_state.pred_lat = 37.77
+    if 'pred_lon' not in st.session_state:
+        st.session_state.pred_lon = -122.42
+    if 'pred_result' not in st.session_state:
+        st.session_state.pred_result = None
 
-    # Preset locations
+    # Preset buttons — clicking updates session state then reruns
     st.markdown("**Or pick a known location:**")
     presets = {
         "San Francisco"  : (37.7749, -122.4194),
@@ -525,22 +519,63 @@ elif page == "🎯 Risk Predictor":
         "Tahoe (Sierra)" : (38.9399, -119.9772),
     }
     preset_cols = st.columns(len(presets))
-    for col, (name, (lat, lon)) in zip(
-            preset_cols, presets.items()):
+    for col, (name, (lat, lon)) in zip(preset_cols, presets.items()):
         if col.button(name):
-            user_lat = lat
-            user_lon = lon
+            st.session_state.pred_lat = lat
+            st.session_state.pred_lon = lon
+            st.session_state.pred_result = None   # clear old result
+
+    col_lat, col_lon = st.columns(2)
+    with col_lat:
+        user_lat = st.number_input(
+            "Latitude",
+            min_value=32.5, max_value=42.0,
+            value=float(st.session_state.pred_lat),
+            step=0.01,
+            format="%.4f",
+            key="lat_input"
+        )
+    with col_lon:
+        user_lon = st.number_input(
+            "Longitude",
+            min_value=-124.5, max_value=-114.0,
+            value=float(st.session_state.pred_lon),
+            step=0.01,
+            format="%.4f",
+            key="lon_input"
+        )
+
+    # Keep session state in sync with manual edits
+    st.session_state.pred_lat = user_lat
+    st.session_state.pred_lon = user_lon
 
     if st.button("🔍 Predict Risk", type="primary"):
-
-        # Find nearest grid point
+        # Compute and store result in session_state so it persists
         distances = np.sqrt(
             (risk_df['lat'] - user_lat)**2 +
             (risk_df['lon'] - user_lon)**2
         )
-        nearest    = risk_df.loc[distances.idxmin()]
-        dist_km    = distances.min() * 111   # rough km
+        nearest = risk_df.loc[distances.idxmin()]
+        dist_km = distances.min() * 111
+        nearby  = risk_df[
+            (risk_df['lat'].between(user_lat-1, user_lat+1)) &
+            (risk_df['lon'].between(user_lon-1, user_lon+1))
+        ]
+        st.session_state.pred_result = {
+            'nearest' : nearest,
+            'dist_km' : dist_km,
+            'user_lat': user_lat,
+            'user_lon': user_lon,
+            'nearby'  : nearby,
+        }
 
+    if st.session_state.pred_result is not None:
+        r        = st.session_state.pred_result
+        nearest  = r['nearest']
+        dist_km  = r['dist_km']
+        user_lat = r['user_lat']
+        user_lon = r['user_lon']
+        nearby   = r['nearby']
         # Display result
         tier  = nearest['risk_tier']
         prob  = nearest['risk_prob']
@@ -572,12 +607,12 @@ elif page == "🎯 Risk Predictor":
             )
 
         with res_col2:
-            st.markdown(f"**📍 Input location**")
+            st.markdown("**📍 Input location**")
             st.markdown(
                 f"Lat: `{user_lat:.4f}`  "
                 f"Lon: `{user_lon:.4f}`"
             )
-            st.markdown(f"**📌 Nearest grid point**")
+            st.markdown("**📌 Nearest grid point**")
             st.markdown(
                 f"Lat: `{nearest['lat']:.4f}`  "
                 f"Lon: `{nearest['lon']:.4f}`  "
@@ -604,11 +639,6 @@ elif page == "🎯 Risk Predictor":
             tiles      = 'CartoDB positron'
         )
 
-        # Add surrounding risk points
-        nearby = risk_df[
-            (risk_df['lat'].between(user_lat-1, user_lat+1)) &
-            (risk_df['lon'].between(user_lon-1, user_lon+1))
-        ]
         for _, row in nearby.iterrows():
             folium.CircleMarker(
                 location     = [row['lat'], row['lon']],
@@ -621,7 +651,6 @@ elif page == "🎯 Risk Predictor":
                                f"{row['risk_pct']}%"
             ).add_to(mini_map)
 
-        # Pin for user location
         folium.Marker(
             location = [user_lat, user_lon],
             tooltip  = "Your location",
@@ -631,4 +660,5 @@ elif page == "🎯 Risk Predictor":
             )
         ).add_to(mini_map)
 
-        st_folium(mini_map, width=700, height=350)
+        st_folium(mini_map, width=700, height=350,
+                  key="mini_map")

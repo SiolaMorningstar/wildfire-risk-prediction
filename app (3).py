@@ -54,7 +54,8 @@ tier_counts = risk_df['risk_tier'].value_counts()
 # ════════════════════════════════════════════════════════════
 with st.sidebar:
     st.image(
-        "https://chatgpt.com/s/m_69cfab070ad0819186e061cc6b1bce52",
+        "https://github.com/SiolaMorningstar/wildfire-risk-prediction",
+        "/blob/main/Flames%20and%20hills%20emblem%20logo.png"
         width=80
     )
     st.title("🔥 Wildfire Risk")

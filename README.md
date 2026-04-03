@@ -23,8 +23,6 @@ The app displays an interactive risk heatmap of California, model performance me
 - [Key Results](#-key-results)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
-- [Running Locally](#-running-locally)
-- [Deploying to Streamlit Cloud](#-deploying-to-streamlit-cloud)
 - [Data Sources](#-data-sources)
 - [How It Works](#-how-it-works)
 - [Acknowledgements](#-acknowledgements)
